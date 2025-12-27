@@ -18,6 +18,7 @@
   ];
   boot.kernelParams = [
     "nvme_core.default_ps_max_latency_us=0"
+    "button.lid_init_state=open"
     #  "nvidia-drm.modeset=0"
   ];
   boot.extraModulePackages = [
