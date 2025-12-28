@@ -6,6 +6,7 @@
   config,
   lib,
   pkgs,
+  jovian,
   ...
 }:
 
@@ -38,8 +39,33 @@
   #   GDK_DPI_SCALE = "0.5";
   #   _JAVA_OPTIONS = "-Dsun.java2d.uiScale=2";
   # };
-
+  boot.plymouth.enable = true;
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 16 * 1024;
+    }
+  ];
   programs.firefox.enable = true;
+  jovian.steam.enable = true;
+  jovian.devices.steamdeck.enable = false;
+  jovian.steam.desktopSession = "plasmawayland";
+  jovian.hardware.amd.gpu.enableBacklightControl = true;
+  jovian.hardware.has.amd.gpu = true;
+  jovian.decky-loader.enable = true;
+  jovian.steam.environment = {
+    ENABLE_GAMESCOPE_WSI = "0";
+  };
+  services.desktopManager.plasma6.enable = true;
+  services.displayManager.sddm.enable = lib.mkForce true;
+  services.displayManager.sddm.wayland.enable = true;
+
+
+  services.xserver.displayManager.gdm.enable = false;
+  services.xserver.displayManager.gdm.wayland = false;
+  services.xserver.desktopManager.gnome.enable = false;
+  
+
   environment.systemPackages = with pkgs; [
     lenovo-legion
   ];
@@ -142,22 +168,20 @@
             };
           };
 
-          services.udev.extraRules =
-            config.services.udev.extraRules
-            + ''
-              KERNEL=="vfio", GROUP="kvm", MODE="0660"
-              KERNEL=="vfio/*", GROUP="kvm", MODE="0660"
+          services.udev.extraRules = config.services.udev.extraRules + ''
+            KERNEL=="vfio", GROUP="kvm", MODE="0660"
+            KERNEL=="vfio/*", GROUP="kvm", MODE="0660"
 
-              SUBSYSTEM=="vfio", KERNEL=="[0-9]*", GROUP="kvm", MODE="0660"
+            SUBSYSTEM=="vfio", KERNEL=="[0-9]*", GROUP="kvm", MODE="0660"
 
-              KERNEL=="bus/usb/*", GROUP="kvm", MODE="0660"
-              KERNEL=="event*", SUBSYSTEM=="input", GROUP="kvm", MODE="0660"
-              SUBSYSTEM=="usb", GROUP="kvm", MODE="0660"
+            KERNEL=="bus/usb/*", GROUP="kvm", MODE="0660"
+            KERNEL=="event*", SUBSYSTEM=="input", GROUP="kvm", MODE="0660"
+            SUBSYSTEM=="usb", GROUP="kvm", MODE="0660"
 
-              SUBSYSTEM=="pci", OWNER="root", GROUP="kvm", MODE="0660"
-              SUBSYSTEM=="pci", ATTRS{vendor}=="0x8086", ATTRS{device}=="0x10de", ATTR{driver_override}="vfio-pci", OWNER="root", GROUP="kvm", MODE="0660"
+            SUBSYSTEM=="pci", OWNER="root", GROUP="kvm", MODE="0660"
+            SUBSYSTEM=="pci", ATTRS{vendor}=="0x8086", ATTRS{device}=="0x10de", ATTR{driver_override}="vfio-pci", OWNER="root", GROUP="kvm", MODE="0660"
 
-            '';
+          '';
           virtualisation.libvirtd = {
             enable = true;
 

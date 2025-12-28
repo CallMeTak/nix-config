@@ -5,6 +5,7 @@
     # NixOS official package source, using the nixos-24.11 branch here
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    jovian.url = "github:Jovian-Experiments/Jovian-NixOS/development";
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       # The `follows` keyword in inputs is used for inheritance.
@@ -21,6 +22,7 @@
       nixpkgs,
       home-manager,
       nixos-hardware,
+      jovian,
       ...
     }:
     {
@@ -29,6 +31,7 @@
         specialArgs = { inherit inputs; };
         system = "x86_64-linux";
         modules = [
+          jovian.nixosModules.default
           # Import the previous configuration.nix we used,
           # so the old configuration file still takes effect
           ./hosts/legion
