@@ -28,6 +28,7 @@
     dnsutils
     mesa
     vscode
+    rclone
 
   ];
   services.tailscale.enable = true;

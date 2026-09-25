@@ -88,6 +88,7 @@
           ];
         in
         {
+          jovian.steam.enable = lib.mkForce false;
           hardware.nvidia.powerManagement.finegrained = lib.mkForce true;
           hardware.amdgpu.initrd.enable = lib.mkForce true;
           security.pam.loginLimits = [
@@ -142,6 +143,8 @@
             extraModprobeConfig = lib.mkMerge [
               config.boot.extraModprobeConfig
               ''
+                blacklist nvidia
+                softdep nvidia pre: vfio-pci
                 options vfio-pci ids=${builtins.concatStringsSep "," vfioIds}
               ''
             ];
